@@ -24,9 +24,6 @@ class Rot13(webapp2.RequestHandler):
 	def post(self):
 		text = self.request.get("text")
 		writeForm(self,rot13(text))
-		#self.response.out.write(text)
-		#self.response.out.write('<br>')
-		#self.response.out.write(rot13(text))
 
 def writeForm(self, rot13_text):
 	form="""
@@ -43,34 +40,43 @@ def writeForm(self, rot13_text):
 def rot13(input):
 	rstring=''
 	for c in input:
-		r = incrementCharacter(c)
+		r = alterCharacter(c)
 		rstring+=str(chr(r))
 	return rstring
 
-def incrementCharacter(c):
+def alterCharacter(c):
 	r = ord(c)
 	if oktorot13(c):
-		if ord(c) in xrange(ord('a'), ord('z')+1):
+		if lowerCaseRange(c):
 			if ord(c) > ord('m'):
-				c = chr(ord(c) - 13)
-				r = ord(c)
+				r = subtractRot13(c)
 			else:
-				r = ord(c) + 13
+				r = addRot13(c)
 		else:
-			if ord(c) in xrange(ord('A'), ord('Z')+1):
+			if upperCaseRange(c):
 				if ord(c) > ord('M'):
-					c = chr(ord(c) - 13)
-					r = ord(c)
+					r = subtractRot13(c)
 				else:
-					r = ord(c) + 13
-	else:
-		r = ord(c)
-	return r 
+					r = addRot13(c)
+	return r
+
+def subtractRot13(c):
+	c = chr(ord(c) - 13)
+	return ord(c)
+
+def addRot13(c):
+	return ord(c) + 13
+
+def lowerCaseRange(c):
+	return (ord(c) in xrange(ord('a'), ord('z')+1))
+
+def upperCaseRange(c):
+	return ord(c) in xrange(ord('A'), ord('Z')+1)
 	
 def oktorot13(c):
-	if ord(c) in xrange(ord('a'), ord('z')+1):
+	if lowerCaseRange(c):
 		return True
-	if ord(c) in xrange(ord('A'), ord('Z')+1):
+	if upperCaseRange(c):
 		return True
 	return False
 
